@@ -28,7 +28,7 @@ class LoginForm extends Component{
     }
     render(){
         return (
-            <Card>
+            <Card style={{marginTop: 53}}>
                 <CardSection>
                     <Input
                       label='Email'
