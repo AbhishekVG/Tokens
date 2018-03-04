@@ -3,6 +3,7 @@ import { connect, Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import firebase from 'firebase';
 import ReduxThunk from 'redux-thunk';
+import logger from 'redux-logger';
 import ChattingAppRouter from './router';
 import reducers from './reducers/index';
 
@@ -20,7 +21,7 @@ export default class ChattingApp extends React.Component{
     }
     render(){
         return(
-            <Provider store={createStore(reducers,  {loginAuth: {email: 'abhishek@gmail.com', password: '123456'}}, applyMiddleware(ReduxThunk))}>
+            <Provider store={createStore(reducers,  {loginAuth: {email: 'test@test.com', password: 'test@123'}}, applyMiddleware(ReduxThunk, logger))}>
                 <ChattingAppRouter />
             </Provider>
         )
