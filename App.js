@@ -1,92 +1,86 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput,ImageBackground, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
-import { Card, Input } from 'react-native-elements'; // Version can be specified in package.json
-import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, Image, Dimensions, AsyncStorage } from 'react-native';
+import { Card, Input, Button } from 'react-native-elements'; // Version can be specified in package.json
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const BG_IMAGE = require('./img/bg_screen4.jpg');
+
 export default class App extends Component {
+  state = {
+    borderColor: 'white',
+    disabled: true,
+  }
+  validateMobileNumber(value) {
+    if (value.length < 12) {
+      this.setState({ borderColor: 'yellow', value: this.format(value), disabled: true })
+    } else if (value.length === 12) {
+      this.setState({ borderColor: 'green', value: this.format(value), disabled: false })
+    }
+  }
+  validateMobileNumberOnBlur(val) {
+    if (this.state.borderColor === 'yellow') {
+      this.setState({ borderColor: 'red' })
+    }
+  }
+  onSubmit(){
+    AsyncStorage.setItem('MobileNumber', this.state.value);
+    console.log(this.state)
+  }
+  format(value) {
+    if (value.length !== 0 && value.length % 4 === 0 && value.repeatedDashCases('-') < 2) {
+      return value.stringConcat(value.length - 1, '-')
+    }
+    return value;
+  }
   render() {
-    const gradientHeight = 600;
-    const data = Array.from({ length: gradientHeight });
-    const gradient = data.map((_, i) => (
-      <View
-        key={i}
-        style={{
-          position: 'absolute',
-          backgroundColor: 'black',
-          height: 1,
-          bottom: (gradientHeight - i - 3),
-          right: 0,
-          left: 0,
-          zIndex: 2,
-          opacity: (1 / gradientHeight) * (i + 1)
-        }}
-      />
-    ));
     return (
       <View style={styles.container}>
-              <ImageBackground
+        <ImageBackground
           source={BG_IMAGE}
           style={styles.bgImage}
         >
-        <View style={{ alignItems: 'center' }}>
-          <Image
-            source={require('./img/icon.png')}
-            style={{
-              width: 150,
-              height: 150,
-              resizeMode: 'contain'
-            }}
-          />
-        </View>
-        {/* {gradient} */}
-        <View style={{ alignItems: 'center' }}>
-          <Input
-            icon={
-              <SimpleIcon
-                name='lock'
-                color='rgba(0, 0, 0, 0.38)'
-                size={25}
-                style={{ backgroundColor: 'yellow' }}
-              />
-            }
-            value=''
-            secureTextEntry={true}
-            keyboardAppearance='dark'
-            autoCapitalize='none'
-            autoCorrect={false}
-            keyboardType='default'
-            returnKeyType={'done'}
-            blurOnSubmit={true}
-            containerStyle={{ marginTop: 160, borderBottomColor: 'rgba(0, 0, 0, 0.38)' }}
-            inputStyle={{ marginLeft: 10 }}
-            placeholder={'Enter mobile number'}
-            // ref={input => this.confirmationInput = input}
-            onSubmitEditing={() => { }}
-            onChangeText={() => { }}
-            displayError={true}
-            errorMessage='Please enter the same password'
-          />
-        </View>
-        {/* <Card>
-          <TextInput style={styles.input}
-            autoCapitalize="none"
-            onSubmitEditing={() => this.passwordInput.focus()}
-            autoCorrect={false}
-            keyboardType='email-address'
-            returnKeyType="next"
-            placeholder='Mobile Number'
-            placeholderTextColor='purple'
-            underlineColorAndroid='transparent'
-          />
-          <TouchableOpacity style={styles.buttonContainer}
-            onPress={() => { }}>
-            <Text style={styles.buttonText}>LOGIN</Text>
-          </TouchableOpacity>
-        </Card> */}
+          <View style={{ alignItems: 'center' }}>
+            <Image
+              source={require('./img/icon.png')}
+              style={{
+                width: 150,
+                height: 150,
+                resizeMode: 'contain'
+              }}
+            />
+          </View>
+          <View style={{ alignItems: 'center', flex: 1 }}>
+            <Input
+              value={this.state.value}
+              // autoFocus
+              keyboardAppearance='dark'
+              autoCapitalize='none'
+              autoCorrect={false}
+              keyboardType='numeric'
+              inputStyle={{ marginLeft: 10, color: 'white', fontSize: 30, height: 60, justifyContent: 'center' }}
+              returnKeyType={'done'}
+              blurOnSubmit={true}
+              containerStyle={{ marginTop: 100, borderBottomColor: this.state.borderColor, borderBottomWidth: 3 }}
+              placeholder={'Enter mobile number'}
+              placeholderTextColor="white"
+              maxLength={12}
+              onBlur={(val) => this.validateMobileNumberOnBlur(val)}
+              onSubmitEditing={() => { }}
+              onChangeText={(val) => this.validateMobileNumber(val)}
+              // displayError={true}
+              // errorMessage='Duplicate Mobile Number'
+            />
+            <Button
+              title="Sign Up"
+              titleStyle={{ color: 'white', fontSize: 15 }}
+              containerStyle={{ marginTop: 10 }}
+              onPress={this.onSubmit.bind(this)}
+              disabled={this.state.disabled}
+              buttonStyle={styles.buttonStyle}
+              disabledStyle={styles.disabledButtonStyle}
+            />
+          </View>
         </ImageBackground>
       </View>
     );
@@ -95,7 +89,6 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 30,
     flex: 1
   },
   input: {
@@ -122,5 +115,22 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  buttonStyle: {
+    backgroundColor: "purple",
+    opacity: 0.8,
+    width: 300,
+    height: 45,
+    borderColor: "black",
+    borderWidth: 0,
+    borderRadius: 50
+  },
+  disabledButtonStyle: {
+    opacity: 1,
+    width: 300,
+    height: 45,
+    borderColor: "black",
+    borderWidth: 0,
+    borderRadius: 50
   }
 });
