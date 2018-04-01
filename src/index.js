@@ -1,68 +1,21 @@
 import React, { Component } from 'react';
-import { View, ActivityIndicator, AsyncStorage, Button } from 'react-native';
-import Redux from 'redux';
-import { Provider, connect } from 'react-redux';
-import { StackNavigator, SwitchNavigator } from 'react-navigation';
-import SignUpPage from './signup';
-import ChatBot from './chat';
+import { View, ActivityIndicator } from 'react-native';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+import ReduxLogger from 'redux-logger';
 
-class TokensBooter extends Component {
-    constructor() {
-        super();
-        this.asyncBoot();
-    }
-    async asyncBoot() {
-        const id = await AsyncStorage.getItem('Tokens');
-        console.log('------>', id)
-        this.props.navigation.navigate(id ? 'AppZone' : 'AuthZone')
-    }
+import { reducers } from './reducers';
+import Auth from './auth';
 
-    // save() {
-    //     AsyncStorage.clear()
-    //     console.log('savred',
-    //     AsyncStorage.getAllKeys())
-    // }
-
+export default class Tokens extends Component {
     render() {
         return (
-            <View>
-                <ActivityIndicator />
-                {/* <Button title="save" onPress={this.save.bind(this)} /> */}
+            <View style={{ flex: 1 }}>
+                <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk, ReduxLogger))}>
+                    <Auth />
+                </Provider>
             </View>
         )
     }
 }
-
-const AuthZone = StackNavigator({
-    SignUpPage: {
-        screen: SignUpPage
-    }
-},
-{
-    // navigationOptions: {
-    //     header: {visible: false}
-    // }
-    headerMode: 'none'
-})
-
-const AppZone = StackNavigator({
-    ChatPage: {
-        screen: ChatBot
-    }
-},
-{
-    // navigationOptions: {
-    //     header: {visible: false}
-    // },
-    headerMode: 'none'
-})
-
-export default SwitchNavigator({
-    AuthZone,
-    AppZone,
-    TokensBooter
-},
-    {
-        initialRouteName: 'TokensBooter'
-    }
-)

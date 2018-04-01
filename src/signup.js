@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, ImageBackground, TouchableOpacity, StyleSheet, Image, Dimensions, AsyncStorage } from 'react-native';
-import { Card, Input, Button } from 'react-native-elements'; // Version can be specified in package.json
+import { connect } from 'react-redux';
+import { Card, Input, Button } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
+import { signUp } from './actions/signupAction';
+// import firebase from 'firebase';
 
 import { styles } from './styles/signupPageStyles';
 const BG_IMAGE = require('./img/bg_screen4.jpg');
 
-export default class App extends Component {
+class SignUpPage extends Component {
     state = {
         borderColor: 'white',
         disabled: true,
@@ -26,11 +29,27 @@ export default class App extends Component {
         }
     }
 
-    onSubmit() {
-        AsyncStorage.setItem('Tokens', this.state.value);
-        this.props.navigation.navigate('ChatPage');
-        console.log(this.state);
+    componentWillReceiveProps(nextProps) {
+        console.log('nextprops', nextProps);
+        if (nextProps.registered) {
+            this.props.navigation.navigate('ChatPage');
+        }
     }
+    onSubmit() {
+        this.props.signUp(this.state.value)
+        // firebase.database().ref(`/tokens/users`).push(this.state.value)
+        //     .then(() => {
+        //         AsyncStorage.setItem('Tokens', this.state.value);
+        //         this.props.navigation.navigate('ChatPage');
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //         console.log('failure');
+        //     })
+        // console.log(this.state);
+    }
+
+
 
     format(value) {
         if (value.length !== 0 && value.length % 4 === 0 && value.repeatedDashCases('-') < 2) {
@@ -40,6 +59,7 @@ export default class App extends Component {
     }
 
     render() {
+        console.log('props', this.props)
         return (
             <View style={styles.container}>
                 <ImageBackground
@@ -74,8 +94,8 @@ export default class App extends Component {
                             onBlur={(val) => this.validateMobileNumberOnBlur(val)}
                             onSubmitEditing={() => { }}
                             onChangeText={(val) => this.validateMobileNumber(val)}
-                        // displayError={true}
-                        // errorMessage='Duplicate Mobile Number'
+                            displayError={this.props.showError}
+                            errorMessage={this.props.errorMessage}
                         />
                         <Button
                             title="Sign Up"
@@ -92,3 +112,15 @@ export default class App extends Component {
         );
     }
 }
+
+
+const mapStateToProps = (state) => {
+    console.log('store', state)
+    const { showError, errorMessage, registered } = state.signUpData;
+    return {
+        showError,
+        errorMessage,
+        registered
+    }
+}
+export default connect(mapStateToProps, { signUp })(SignUpPage);

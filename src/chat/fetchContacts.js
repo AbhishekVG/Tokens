@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, AsyncStorage } from 'react-native';
 import Contacts from 'react-native-contacts';
 
 export default class ContactFetch extends Component {
@@ -19,6 +19,7 @@ export default class ContactFetch extends Component {
         console.log('list', list)
     }
     fetchPress() {
+        AsyncStorage.clear();
         console.log('Contacts', Contacts);
         Contacts.getAll((err, contacts) => {
             if (err === 'denied') {
