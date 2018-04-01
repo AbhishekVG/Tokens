@@ -19,6 +19,7 @@ export default class App extends Component {
             this.setState({ borderColor: 'green', value: this.format(value), disabled: false })
         }
     }
+
     validateMobileNumberOnBlur(val) {
         if (this.state.borderColor === 'yellow') {
             this.setState({ borderColor: 'red' })
@@ -26,9 +27,9 @@ export default class App extends Component {
     }
 
     onSubmit() {
-        AsyncStorage.setItem('MobileNumber', this.state.value);
-        Actions.welcomePage();
-        console.log(this.state)
+        AsyncStorage.setItem('Tokens', this.state.value);
+        this.props.navigation.navigate('ChatPage');
+        console.log(this.state);
     }
 
     format(value) {

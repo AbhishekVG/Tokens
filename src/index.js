@@ -1,27 +1,68 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, ActivityIndicator, AsyncStorage, Button } from 'react-native';
 import Redux from 'redux';
 import { Provider, connect } from 'react-redux';
-import { Actions, Scene, Router, Stack } from 'react-native-router-flux'
-
+import { StackNavigator, SwitchNavigator } from 'react-navigation';
 import SignUpPage from './signup';
-import chatBot from './chat';
+import ChatBot from './chat';
 
-export default class Tokens extends Component {
+class TokensBooter extends Component {
+    constructor() {
+        super();
+        this.asyncBoot();
+    }
+    async asyncBoot() {
+        const id = await AsyncStorage.getItem('Tokens');
+        console.log('------>', id)
+        this.props.navigation.navigate(id ? 'AppZone' : 'AuthZone')
+    }
+
+    // save() {
+    //     AsyncStorage.clear()
+    //     console.log('savred',
+    //     AsyncStorage.getAllKeys())
+    // }
+
     render() {
         return (
-            <View style={{ flex: 1 }}>
-                <Router>
-                    <Stack key="root">
-                        <Scene key='auth' >
-                            <Scene key='signup' hideNavBar component={SignUpPage} />
-                        </Scene>
-                        <Scene key='chatPage' hideNavBar>
-                            <Scene key='welcomePage' component={chatBot} tabs/>
-                        </Scene>
-                    </Stack>
-                </Router>
+            <View>
+                <ActivityIndicator />
+                {/* <Button title="save" onPress={this.save.bind(this)} /> */}
             </View>
         )
     }
 }
+
+const AuthZone = StackNavigator({
+    SignUpPage: {
+        screen: SignUpPage
+    }
+},
+{
+    // navigationOptions: {
+    //     header: {visible: false}
+    // }
+    headerMode: 'none'
+})
+
+const AppZone = StackNavigator({
+    ChatPage: {
+        screen: ChatBot
+    }
+},
+{
+    // navigationOptions: {
+    //     header: {visible: false}
+    // },
+    headerMode: 'none'
+})
+
+export default SwitchNavigator({
+    AuthZone,
+    AppZone,
+    TokensBooter
+},
+    {
+        initialRouteName: 'TokensBooter'
+    }
+)
