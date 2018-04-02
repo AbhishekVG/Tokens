@@ -5,7 +5,6 @@ import { List, ListItem, SearchBar } from "react-native-elements"; // 0.19.0
 class FlatListDemo extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       loading: false,
       data: [],
