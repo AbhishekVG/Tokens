@@ -8,6 +8,7 @@ import { signUp } from './actions/signupAction';
 
 import { styles } from './styles/signupPageStyles';
 const BG_IMAGE = require('./img/bg_screen4.jpg');
+console.log("--->BG_IMAGE",BG_IMAGE)
 
 class SignUpPage extends Component {
     state = {

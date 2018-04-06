@@ -18,6 +18,7 @@ export default class ContactFetch extends Component {
         })
         console.log('list', list)
     }
+
     fetchPress() {
         AsyncStorage.clear();
         console.log('Contacts', Contacts);

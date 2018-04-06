@@ -11,6 +11,7 @@ import firebase from 'firebase';
 import { reducers } from './reducers';
 import SignUpPage from './signup';
 import ChatBot from './chat';
+import { SignIn } from './actions/signupAction';
 
 class TokensBooter extends Component {
     componentWillMount() {
@@ -31,25 +32,26 @@ class TokensBooter extends Component {
         //     .catch((err) => {
         //         console.log('Initializing failed')
         //     })
-        
     }
-    componentDidMount(){
+    componentDidMount() {
         this.asyncBoot();
     }
     async asyncBoot() {
-        let id;
-        try{
-         id = await AsyncStorage.getItem('Tokens');
-        } catch(err){
-            console.log('error',err)
+        console.log('asyncbot',this.props)
+        let userData;
+        try {
+            userData = await AsyncStorage.getItem('Tokens');
+            this.props.SignIn(JSON.parse(userData));
+        } catch (err) {
+            console.log('error', err)
         }
-        console.log('------>', id)
-        this.props.navigation.navigate(id ? 'AppZone' : 'AuthZone')
+        console.log('------>userdetails', userData)
+        this.props.navigation.navigate(userData ? 'AppZone' : 'AuthZone')
     }
 
     render() {
         return (
-            <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <ActivityIndicator />
             </View>
         )
@@ -71,12 +73,14 @@ const AppZone = StackNavigator({
     { headerMode: 'none' }
 )
 
+const TokensBooterz = connect(null, { SignIn })(TokensBooter);
+
 export default SwitchNavigator({
     AuthZone,
     AppZone,
-    TokensBooter
+    TokensBooterz
 },
     {
-        initialRouteName: 'TokensBooter'
+        initialRouteName: 'TokensBooterz'
     }
 )

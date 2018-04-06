@@ -18,7 +18,7 @@ export default TabNavigator(
         tabBarIcon: ({ focused, tintColor }) => {
           const { routeName } = navigation.state;
           let iconName;
-          console.log('---->', focused, tintColor, navigation)
+          // console.log('---->', focused, tintColor, navigation)
           if (routeName === 'Contacts') {
             iconName = `ios-contacts${focused ? '' : '-outline'}`;
           } else if (routeName === 'ChatHistory') {

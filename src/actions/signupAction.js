@@ -21,8 +21,10 @@ export const signUp = (mobileNumber) => {
                 userList.push(mobileNumber)
                     .then((e) => {
                         console.log('success', e)
-                        AsyncStorage.setItem('Tokens', mobileNumber);
-                        SignupComplete(dispatch, mobileNumber)
+                        const userData = JSON.stringify({ mobileNumber, id: e.key })
+                        AsyncStorage.setItem('Tokens', userData);
+                        console.log('---->', userData)
+                        SignupComplete(dispatch, userData)
                     })
                     .catch((err) => {
                         console.log(err);
@@ -48,9 +50,16 @@ const SignupFailed = (dispatch) => {
     })
 }
 
-const SignupComplete = (dispatch, mobileNumber) => {
+const SignupComplete = (dispatch, userData) => {
     dispatch({
         type: 'SIGNUP_COMPLETE',
-        payload: mobileNumber
+        userData
     })
+}
+
+export const SignIn = (userData) => {
+    return {
+        type: 'SIGNED_IN',
+        userData
+    }
 }

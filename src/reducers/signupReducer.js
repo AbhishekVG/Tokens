@@ -1,6 +1,6 @@
 const INITIAL_STATE = {
     loader: false,
-    data: '',
+    userData: '',
     errorMessage: '',
     showError: false,
     registered: false
@@ -17,10 +17,11 @@ export default (state = INITIAL_STATE, action) => {
                 showError: true
             }
         case 'SIGNUP_COMPLETE':
+        case 'SIGNED_IN':
             return {
                 ...INITIAL_STATE,
                 registered: true,
-                data: action.payload
+                userData: action.userData
             }
         default: return state;
     }
